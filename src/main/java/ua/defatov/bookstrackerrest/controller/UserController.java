@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserController {
 
+    private static final String USER_ID = "{user_id}";
+
     private final UserRepository userRepository;
 
     private final UserFactory userFactory;
@@ -41,8 +43,8 @@ public class UserController {
 
     }
 
-    @GetMapping(path = "{user_id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable long user_id) {
+    @GetMapping(path = USER_ID)
+    public ResponseEntity<UserResponse> read(@PathVariable long user_id) {
 
         User user = userRepository.findById(user_id).orElse(null);
 
@@ -54,24 +56,44 @@ public class UserController {
 
     }
 
-    @PutMapping(path = "/add")
-    public ResponseEntity<UserResponse> registerUser(UserRequest userRequest) {
+    @PutMapping
+    public ResponseEntity<UserResponse> create(UserRequest userRequest) {
         User presentUser = userRepository.findAll().stream()
                 .filter(usr -> usr.getEmail().equals(userRequest.getEmail()))
                 .findFirst().orElse(null);
 
         if(presentUser == null) {
-            User newUser = User.builder()
-                    .firstName(userRequest.getFirstName())
-                    .lastName(userRequest.getLastName())
-                    .email(userRequest.getEmail())
-                    .password(userRequest.getPassword())
-                    .build();
-            UserResponse userResponse = userFactory.makeUserResponse(userRepository.save(newUser));
+            User updatedUser = userFactory.makeUserEntity(userRequest);
+            User user = userRepository.save(updatedUser);
+            UserResponse userResponse = userFactory.makeUserResponse(user);
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping(path = "{user_id}")
+    public ResponseEntity<UserResponse> update(
+            @PathVariable long user_id,
+            UserRequest userRequest
+    ) {
+        User presentUser = userRepository.findById(user_id).orElse(null);
+
+        if(presentUser != null) {
+            User updatedUser = userFactory.makeUserEntity(userRequest);
+            updatedUser.setId(presentUser.getId());
+            User user = userRepository.save(updatedUser);
+            UserResponse userResponse = userFactory.makeUserResponse(user);
+            return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+
+    @DeleteMapping(path = USER_ID)
+    public void delete(@PathVariable long user_id) {
+        userRepository.deleteById(user_id);
     }
 
 
