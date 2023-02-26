@@ -28,6 +28,6 @@ public class User {
 
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Book> books;
 }

@@ -1,6 +1,7 @@
 package ua.defatov.bookstrackerrest.model;
 
-public enum Genres {
+public enum Genre {
     FICTION,
     NON_FICTION
+
 }

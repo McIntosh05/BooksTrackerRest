@@ -8,11 +8,9 @@ import ua.defatov.bookstrackerrest.dto.UserRequest;
 import ua.defatov.bookstrackerrest.dto.UserResponse;
 import ua.defatov.bookstrackerrest.factory.UserFactory;
 import ua.defatov.bookstrackerrest.model.User;
-import ua.defatov.bookstrackerrest.repository.BookRepository;
 import ua.defatov.bookstrackerrest.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,7 +29,7 @@ public class UserController {
         this.userFactory = userFactory;
     }
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
 
         List<UserResponse> users = userRepository.findAll().stream()
                 .map(userFactory::makeUserResponse)
@@ -44,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping(path = USER_ID)
-    public ResponseEntity<UserResponse> read(@PathVariable long user_id) {
+    public ResponseEntity<UserResponse> readUser(@PathVariable long user_id) {
 
         User user = userRepository.findById(user_id).orElse(null);
 
@@ -57,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<UserResponse> create(UserRequest userRequest) {
+    public ResponseEntity<UserResponse> createUser(UserRequest userRequest) {
         User presentUser = userRepository.findAll().stream()
                 .filter(usr -> usr.getEmail().equals(userRequest.getEmail()))
                 .findFirst().orElse(null);
@@ -73,7 +71,7 @@ public class UserController {
     }
 
     @PatchMapping(path = "{user_id}")
-    public ResponseEntity<UserResponse> update(
+    public ResponseEntity<UserResponse> updateUser(
             @PathVariable long user_id,
             UserRequest userRequest
     ) {
@@ -81,7 +79,7 @@ public class UserController {
 
         if(presentUser != null) {
             User updatedUser = userFactory.makeUserEntity(userRequest);
-            updatedUser.setId(presentUser.getId());
+            updatedUser.setId(user_id);
             User user = userRepository.save(updatedUser);
             UserResponse userResponse = userFactory.makeUserResponse(user);
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
@@ -92,7 +90,7 @@ public class UserController {
 
 
     @DeleteMapping(path = USER_ID)
-    public void delete(@PathVariable long user_id) {
+    public void deleteUser(@PathVariable long user_id) {
         userRepository.deleteById(user_id);
     }
 
