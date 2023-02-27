@@ -25,6 +25,7 @@ public class Book {
     @Setter(AccessLevel.NONE)
     private byte grade;
 
+    @Enumerated(EnumType.STRING)
     private Genre genre;
 
     private String description;

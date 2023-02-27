@@ -1,5 +1,6 @@
 package ua.defatov.bookstrackerrest.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/users")
+@AllArgsConstructor
 @Slf4j
 public class UserController {
 
@@ -24,10 +26,6 @@ public class UserController {
 
     private final UserFactory userFactory;
 
-    public UserController(UserRepository userRepository, UserFactory userFactory) {
-        this.userRepository = userRepository;
-        this.userFactory = userFactory;
-    }
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
 

@@ -1,5 +1,6 @@
 package ua.defatov.bookstrackerrest.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users/{user_id}/books")
+@AllArgsConstructor
 public class BookController {
 
     private static final String BOOK_ID = "{book_id}";
@@ -27,12 +29,6 @@ public class BookController {
 
     private final BookFactory bookFactory;
 
-
-    public BookController(BookRepository bookRepository, UserRepository userRepository, BookFactory bookFactory) {
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
-        this.bookFactory = bookFactory;
-    }
 
     @GetMapping
     public ResponseEntity<List<BookResponse>> getAllBooks(
